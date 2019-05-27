@@ -4,8 +4,12 @@
 #define NAPI_EXPERIMENTAL
 #define NAPI_VERSION 4
 #include "napi.h"
+#include "uv.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/errno.h>
 
 Napi::Value Fork(const Napi::CallbackInfo& info);
+Napi::Value OnChildExit(const Napi::CallbackInfo& info);
+Napi::Value Stop(const Napi::CallbackInfo& info);
+void hive__chld(uv_signal_t* handle, int signal);

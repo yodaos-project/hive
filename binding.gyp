@@ -1,10 +1,10 @@
 {
   "targets": [
     {
-      "target_name": "fork",
+      "target_name": "hive",
       "cflags!": [ "-fno-exceptions" ],
       "cflags_cc!": [ "-fno-exceptions" ],
-      "sources": [ "src/fork.cc" ],
+      "sources": [ "src/hive.cc" ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"
       ],
