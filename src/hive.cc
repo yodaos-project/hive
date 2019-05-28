@@ -86,6 +86,10 @@ void hive__chld(uv_signal_t* handle, int signal) {
   int exit_status;
   int term_signal;
 
+  if (onexit.IsEmpty()) {
+    return;
+  }
+
   for (auto it = children.cbegin(); it != children.cend(); it++) {
     do
       pid = waitpid(*it, &status, WNOHANG);
