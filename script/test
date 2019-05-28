@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+help="
+script/test
+
+--exec       node or node variant executable path
+--fail-fast  fail immediately on first error
+-h,--help    show this message
+"
+
+exec="node"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --exec)
+      exec="$2"
+      shift
+      ;;
+    --fail-fast)
+      set -e
+      ;;
+    -h|--help)
+      printf "$help"
+      exit
+      ;;
+    --*)
+      echo "Illegal option $1"
+      ;;
+  esac
+  shift $(( $# > 0 ? 1 : 0 ))
+done
+
+set -x
+tests=`find . -name '*.test.js'`
+failed=0
+for it in $tests; do
+  echo $it
+  command $exec $it
+  status=$?
+  printf "# $it : $status\n"
+  if test $status -gt 0; then
+    failed=`expr $failed + 1`
+  fi
+done
+
+if test $failed -gt 0; then
+  exit 1
+fi

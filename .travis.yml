@@ -1,0 +1,19 @@
+stages:
+- test
+
+language: node_js
+node_js:
+- '10'
+
+install:
+- yarn
+
+script:
+- yarn build
+- yarn test
+
+jobs:
+  include:
+  - stage: test
+    os: linux
+    dist: trusty

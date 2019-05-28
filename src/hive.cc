@@ -1,5 +1,9 @@
 #include "hive.h"
+#include <stdlib.h>
+#include <unistd.h>
 #include <list>
+#include <sys/errno.h>
+#include <sys/wait.h>
 
 using namespace std;
 
@@ -22,6 +26,10 @@ static uv_signal_t signal_handler;
 
 Napi::Value Fork(const Napi::CallbackInfo& info) {
   auto env = info.Env();
+
+  uv_loop_t* loop;
+  napi_get_uv_event_loop(napi_env(env), &loop);
+
   auto process = info[0].As<Napi::Object>();
   auto pid = fork();
   if (pid < 0) {
@@ -36,7 +44,13 @@ Napi::Value Fork(const Napi::CallbackInfo& info) {
     return Napi::Number::New(env, pid);
   }
   onexit.Reset();
+  /** prevent information been leaked to child processes */
   children.empty();
+#if UV_VERSION_MAJOR == 1 && UV_VERSION_MINOR >= 12
+  /** reinitialize uv loop */
+  uv_loop_fork(loop);
+#endif
+
   if (signal_listened) {
     uv_signal_stop(&signal_handler);
     signal_listened = false;
