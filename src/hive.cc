@@ -5,6 +5,14 @@
 #include <sys/errno.h>
 #include <sys/wait.h>
 
+#if UV_VERSION_MAJOR == 1 && UV_VERSION_MINOR >= 12
+// Nothing to include additionally
+#elif defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/event.h>
+#include <sys/time.h>
+#endif
+
 using namespace std;
 
 // Initialize native add-on
@@ -49,6 +57,8 @@ Napi::Value Fork(const Napi::CallbackInfo& info) {
 #if UV_VERSION_MAJOR == 1 && UV_VERSION_MINOR >= 12
   /** reinitialize uv loop */
   uv_loop_fork(loop);
+#elif defined(__APPLE__)
+  loop->backend_fd = kqueue();
 #endif
 
   if (signal_listened) {
