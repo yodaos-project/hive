@@ -15,6 +15,6 @@ hive.onExit(helper.mustCall((_pid, code, signal) => {
 pid = hive.fork(__dirname, ['./children/alive'])
 if (pid > 0) {
   setTimeout(() => {
-    process.kill(pid, SIGINT)
+    hive.kill(pid, SIGINT)
   }, 2000)
 }

@@ -18,6 +18,7 @@ using namespace std;
 // Initialize native add-on
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "fork"), Napi::Function::New(env, Fork));
+  exports.Set(Napi::String::New(env, "kill"), Napi::Function::New(env, Kill));
   exports.Set(Napi::String::New(env, "onChildExit"), Napi::Function::New(env, OnChildExit));
   exports.Set(Napi::String::New(env, "stop"), Napi::Function::New(env, Stop));
   return exports;
@@ -76,6 +77,14 @@ Napi::Value Fork(const Napi::CallbackInfo& info) {
                                 napi_property_attributes(napi_enumerable | napi_configurable));
   process.DefineProperties({ pidDescriptor, ppidDescriptor });
   return Napi::Number::New(env, 0);
+}
+
+Napi::Value Kill(const Napi::CallbackInfo& info) {
+  auto env = info.Env();
+  int pid = info[0].As<Napi::Number>().Int32Value();
+  int signal = info[1].As<Napi::Number>().Int32Value();
+  int status = uv_kill(pid, signal);
+  return Napi::Number::New(env, status);
 }
 
 Napi::Value OnChildExit(const Napi::CallbackInfo& info) {
