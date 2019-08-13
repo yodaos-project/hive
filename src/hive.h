@@ -5,6 +5,7 @@
 #define NAPI_VERSION 4
 #include "napi.h"
 #include "uv.h"
+#include "node.h"
 
 Napi::Value Fork(const Napi::CallbackInfo& info);
 Napi::Value Kill(const Napi::CallbackInfo& info);

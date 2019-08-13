@@ -46,9 +46,12 @@ Napi::Value Fork(const Napi::CallbackInfo& info) {
   }
   onexit.Reset();
   /** prevent information been leaked to child processes */
-  children.empty();
+  children.clear();
   /** reinitialize uv loop */
   uv_loop_fork(loop);
+#ifdef NODE_RELEASE
+  node::ForkPlatform();
+#endif // NODE_RELEASE
 
   if (signal_listened) {
     uv_signal_stop(&signal_handler);
